@@ -2,7 +2,7 @@ const Read = require( 'fs' ).readFileSync;
 
 const GetLinks = function( content )
 {
-	const REGEXP = RegExp( 'https:\/\/[-a-zA-Z.\/_()0-9]+', 'g' );
+	const REGEXP = RegExp( 'http:\/\/[-a-zA-Z.\/_()0-9]+', 'g' );
 	let match;
 	let matches = [];
 
@@ -15,4 +15,5 @@ const GetLinks = function( content )
 };
 
 module.exports = GetLinks( Read( "./sitemap.txt" ) );
+console.log( module.exports );
 //PrintLinks( module.exports );

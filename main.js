@@ -80,15 +80,15 @@ const ImgChecker = function()
 		`;
 
 		Write( './images-missing-alt-tags.html', FINAL_CONTENT );
-		Write( './.interrupted', '' );
-		RemoveFile( './.progress' );
-		RemoveFile( './.links-left' );
+		try { Write( './.interrupted', '' ); } catch ( err ) { };
+		try { RemoveFile( './.progress' ); } catch ( err ) { };
+		try { RemoveFile( './.links-left' ); } catch ( err ) { };
 	};
 
 	const PrintProgress = function( content )
 	{
-		Write( './.progress', content );
-		Write( './.interrupted', '!' );
+		try { Write( './.progress', content ); } catch ( err ) { };
+		try { Write( './.interrupted', '!' ); } catch ( err ) { };
 	};
 
 	const PrintLinks = function( link_data )
@@ -147,17 +147,38 @@ const ImgChecker = function()
 
 	const CheckInterrupted = function()
 	{
-		const INTERRUPTED = Read( './.interrupted' );
-		return !( !INTERRUPTED && INTERRUPTED[ 0 ] !== '!' );
+		try
+		{
+			const INTERRUPTED = Read( './.interrupted' );
+			return !( !INTERRUPTED && INTERRUPTED[ 0 ] !== '!' );
+		}
+		catch ( err )
+		{
+			return false;
+		}
 	};
+
+	let normal = false;
 
 	if ( CheckInterrupted() )
 	{
-		const LINKS = Read( './.links-left' ).split( "\n" );
-		const CONTENT = Read( './.progress' );
-		MakeRequest( LINKS, 0, CONTENT );
+		try
+		{
+			const LINKS = Read( './.links-left' ).split( "\n" );
+			const CONTENT = Read( './.progress' );
+			MakeRequest( LINKS, 0, CONTENT );
+		}
+		catch ( err )
+		{
+			normal = true;
+		}
 	}
 	else
+	{
+		normal = true;
+	}
+
+	if ( true === normal )
 	{
 		const LINKS = require( './get-links.js' );
 		if ( LINKS.length > 0 )
